@@ -1,0 +1,50 @@
+# Builds the .mrpack on every push and pull request, from the exact versions in pack.lock.json,
+# and checks the pack is whole: every mod in pack.json is pinned in the lock, our own jars
+# (Cozy Core, Spawn Gazebo and Not Now Shield in overrides/mods, Pocket List and Nightfall Clock
+# in client-overrides/mods) are there, and Biomes O' Plenty has the TerraBlender it needs and none
+# of the mods that crash with it. The built pack is attached to each run under "Pack".
+
+name: build
+on: [pull_request, push]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v6
+      - name: setup node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - name: build the pack from the lock
+        run: node build-pack.js
+      - name: every mod is pinned in the lock
+        # Building from the lock leaves it as it was; a change means pack.json has a mod (or a
+        # dependency) that isn't pinned yet. Run `node build-pack.js` locally and commit the lock.
+        run: git diff --exit-code pack.lock.json
+      - name: our own jars are in the pack
+        run: |
+          for f in overrides/mods/cozy-core-*-fabric.jar overrides/mods/spawn-gazebo-*.jar \
+                   overrides/mods/not-now-shield-*.jar client-overrides/mods/pocket-list-*.jar \
+                   client-overrides/mods/nightfallclock-*.jar; do
+            ls build/stage/$f
+            unzip -l dist/*.mrpack | grep -E "(^|[[:space:]])${f//\*/.*}$"
+          done
+      - name: Biomes O' Plenty can start
+        # BOP needs TerraBlender, which its Modrinth dependencies don't list (pack.json names it).
+        # Wilder Wild and Promenade bundle Biolith, which crashes with TerraBlender on 26.3.
+        run: |
+          unzip -p dist/*.mrpack modrinth.index.json > index.json
+          grep -q 'mods/TerraBlender-' index.json
+          if grep -qiE 'mods/(WilderWild|promenade)-' index.json; then
+            echo "Wilder Wild or Promenade is in the pack: they crash with TerraBlender"; exit 1
+          fi
+      - name: capture the pack
+        uses: actions/upload-artifact@v7
+        with:
+          name: Pack
+          path: dist/

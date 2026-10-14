@@ -24,6 +24,9 @@ downloaded from Modrinth.
 - `node install-test.js test-instance`: installs the pack like a launcher would, for a test game
   (files already there with the right hash are kept, so only new ones download).
 - `node scan-mixins.js test-instance/mods`: other mods patching the classes our mods hook.
+- CI (`.github/workflows/build.yml`) builds the pack from the lock on every push and checks
+  every mod is pinned, our own jars are inside, and BOP has TerraBlender and no Biolith mods. It
+  can't play the pack: test a change by installing it and opening a new world.
 - `node rules-test.js test-instance`: with a test game open (the local toolkit's
   `new-test-world.js --mcp --commands`), checks Cozy Core's creeper, fire and Hearth Lantern rules
   inside the whole pack, each with a proof run. Run it after any mod is added or updated.
