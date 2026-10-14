@@ -1,0 +1,193 @@
+// Builds the Cozy Core Pack .mrpack: takes every mod in pack.json (plus their required
+// dependencies) from Modrinth at the exact version pinned in pack.lock.json, writes
+// modrinth.index.json, and zips it with the overrides folder.
+//
+//   node build-pack.js             -> dist/Cozy Core Pack-<version>.mrpack, from the lock
+//   node build-pack.js --outdated  -> lists the mods with a newer 26.3 build; changes nothing
+//   node build-pack.js --update    -> moves everything to the newest builds, rewrites the lock
+//                                     and lists what changed, then builds
+//
+// A mod new to pack.json (or a new dependency) gets its newest build and joins the lock.
+//
+// Requires Node 22+ (fetch).
+const fs = require('fs'), path = require('path');
+
+const ROOT = __dirname;
+const pack = JSON.parse(fs.readFileSync(path.join(ROOT, 'pack.json'), 'utf8'));
+const UA = { 'User-Agent': 'gabmaybelle/cozy-core-pack (pack builder)' };
+const api = p => fetch('https://api.modrinth.com/v2' + p, { headers: UA }).then(r => {
+	if (!r.ok) throw new Error(`${r.status} ${p}`);
+	return r.json();
+});
+const RANK = { release: 0, beta: 1, alpha: 2 };
+const UPDATE = process.argv.includes('--update'), OUTDATED = process.argv.includes('--outdated');
+const LOCK = path.join(ROOT, 'pack.lock.json');
+const pinned = fs.existsSync(LOCK) ? JSON.parse(fs.readFileSync(LOCK, 'utf8')).projects : {};
+
+async function newestVersion(id, loader = 'fabric') {
+	const q = `?loaders=${encodeURIComponent(JSON.stringify([loader]))}&game_versions=${encodeURIComponent(JSON.stringify([pack.minecraft]))}`;
+	const versions = await api(`/project/${id}/version${q}`);
+	if (!versions.length) throw new Error(`no ${loader} ${pack.minecraft} build for ${id}`);
+	// Prefer the newest release; fall back to the newest beta, then alpha.
+	versions.sort((a, b) => RANK[a.version_type] - RANK[b.version_type] || b.date_published.localeCompare(a.date_published));
+	return versions[0];
+}
+
+/** The pinned version of a project, or its newest build when it isn't pinned yet (or with --update). */
+async function pickVersion(project, loader = 'fabric') {
+	const pin = pinned[project.slug];
+	return pin && !UPDATE ? api(`/version/${pin.version}`) : newestVersion(project.id, loader);
+}
+
+(async () => {
+	const chosen = new Map();   // project id -> { project, version, reason }
+	const deps = new Map();     // project id -> ids of the projects it requires
+	const queue = pack.mods.map(slug => ({ id: slug, reason: 'listed' }));
+	while (queue.length) {
+		const { id, reason } = queue.shift();
+		const project = await api(`/project/${id}`);
+		if (chosen.has(project.id)) continue;
+		if ((pack.exclude || []).includes(project.slug)) continue;
+		let version;
+		try {
+			version = await pickVersion(project);
+		} catch (e) {
+			// Multi-loader jars sometimes list Forge-only libraries as required.
+			if (reason === 'listed') throw e;
+			console.warn(`skipping ${project.title} (${reason}): ${e.message}`);
+			continue;
+		}
+		chosen.set(project.id, { project, version, reason, loader: 'fabric' });
+		deps.set(project.id, version.dependencies.filter(d => d.dependency_type === 'required' && d.project_id).map(d => d.project_id));
+		for (const dep of version.dependencies) {
+			if (dep.dependency_type === 'required' && dep.project_id && !chosen.has(dep.project_id)) {
+				queue.push({ id: dep.project_id, reason: `needed by ${project.title}` });
+			}
+		}
+	}
+
+	const side = s => (s === 'unsupported' ? 'unsupported' : s === 'required' ? 'required' : 'optional');
+	// A server needs everything its server-side mods depend on, even libraries that call
+	// themselves server-optional on Modrinth (Fabric API, Placeholder API, config libraries...).
+	// pack.serverRequired lists extra ones, such as what the overrides (our own jar) need.
+	const serverNeeds = new Set();
+	const bySlug = new Map([...chosen.values()].map(c => [c.project.slug, c.project.id]));
+	const visit = id => {
+		// Even a "client-only" library comes along if a server mod depends on it (Rechiseled needs Fusion).
+		if (serverNeeds.has(id) || !chosen.has(id)) return;
+		serverNeeds.add(id);
+		(deps.get(id) || []).forEach(visit);
+	};
+	for (const { project } of chosen.values()) if (project.server_side === 'required') visit(project.id);
+	for (const slug of pack.serverRequired || []) visit(bySlug.get(slug));
+	const files = [];
+	for (const { project, version } of chosen.values()) {
+		const file = version.files.find(f => f.primary) || version.files[0];
+		const optional = (pack.optional || []).includes(project.slug);
+		files.push({
+			path: `mods/${file.filename}`,
+			hashes: { sha1: file.hashes.sha1, sha512: file.hashes.sha512 },
+			env: {
+				// Always installed on the client: in singleplayer the player's game is also the
+				// server, so server-only mods (RightClickHarvest) still need to be there.
+				client: optional ? 'optional' : 'required',
+				// An optional client-only mod (Entity Model Features) still never goes on a server.
+				server: serverNeeds.has(project.id) ? 'required'
+					: optional && side(project.server_side) !== 'unsupported' ? 'optional' : side(project.server_side),
+			},
+			downloads: [file.url],
+			fileSize: file.size,
+		});
+	}
+	// Shader packs (Iris) and resource packs from Modrinth, installed client-side only.
+	const extras = [
+		...(pack.shaders || []).map(slug => ({ slug, loader: 'iris', folder: 'shaderpacks', reason: 'shader' })),
+		...(pack.resourcePacks || []).map(slug => ({ slug, loader: 'minecraft', folder: 'resourcepacks', reason: 'resource pack' })),
+	];
+	for (const { slug, loader, folder, reason } of extras) {
+		const project = await api(`/project/${slug}`);
+		const version = await pickVersion(project, loader);
+		const file = version.files.find(f => f.primary) || version.files[0];
+		files.push({
+			path: `${folder}/${file.filename}`,
+			hashes: { sha1: file.hashes.sha1, sha512: file.hashes.sha512 },
+			env: { client: (pack.optional || []).includes(slug) ? 'optional' : 'required', server: 'unsupported' },
+			downloads: [file.url],
+			fileSize: file.size,
+		});
+		chosen.set(project.id, { project, version, reason, loader });
+	}
+	files.sort((a, b) => a.path.localeCompare(b.path));
+
+	if (OUTDATED) {
+		let n = 0;
+		for (const { project, version, loader } of [...chosen.values()].sort((a, b) => a.project.title.localeCompare(b.project.title))) {
+			const newest = await newestVersion(project.id, loader);
+			if (newest.id !== version.id) {
+				n++;
+				console.log(`${project.title}: ${version.version_number} -> ${newest.version_number} [${newest.version_type}]`);
+			}
+		}
+		console.log(n ? `\n${n} with updates; run with --update to take them.` : 'Everything is on its newest 26.3 build.');
+		return;
+	}
+
+	// The default shader is switched on by file name, so an update that renames it would leave new
+	// players with no shader and no error. Stop here, before the lock or the pack is written.
+	const irisFile = path.join(ROOT, 'overrides', 'config', 'yosbr', 'config', 'iris.properties');
+	if (fs.existsSync(irisFile)) {
+		const wanted = (fs.readFileSync(irisFile, 'utf8').match(/^shaderPack=(.+?)\s*$/m) || [])[1];
+		if (wanted && !files.some(f => f.path === `shaderpacks/${wanted}`)) {
+			const have = files.filter(f => f.path.startsWith('shaderpacks/')).map(f => f.path.slice('shaderpacks/'.length));
+			throw new Error(`iris.properties turns on shaderPack=${wanted}, but the pack's shader files are: ${have.join(', ')}.\n`
+				+ 'Update shaderPack in overrides/config/yosbr/config/iris.properties to the new file name, then build again.');
+		}
+	}
+
+	// The lock: every project at the exact version this build used, so the next build is the same.
+	const lock = {};
+	for (const { project, version } of [...chosen.values()].sort((a, b) => a.project.slug.localeCompare(b.project.slug))) {
+		lock[project.slug] = { version: version.id, number: version.version_number, type: version.version_type };
+	}
+	fs.writeFileSync(LOCK, JSON.stringify({ minecraft: pack.minecraft, projects: lock }, null, '\t') + '\n');
+	const changes = [];
+	for (const slug of new Set([...Object.keys(pinned), ...Object.keys(lock)])) {
+		const was = pinned[slug], now = lock[slug];
+		if (!was) changes.push(`+ ${slug} ${now.number}`);
+		else if (!now) changes.push(`- ${slug} ${was.number}`);
+		else if (was.version !== now.version) changes.push(`  ${slug} ${was.number} -> ${now.number}`);
+	}
+	if (changes.length) console.log(`pack.lock.json changed:\n${changes.sort().join('\n')}\n`);
+
+	const index = {
+		formatVersion: 1,
+		game: 'minecraft',
+		versionId: pack.version,
+		name: pack.name,
+		summary: pack.summary,
+		files,
+		dependencies: { minecraft: pack.minecraft, 'fabric-loader': pack.fabricLoader },
+	};
+
+	const stage = path.join(ROOT, 'build', 'stage');
+	fs.rmSync(path.join(ROOT, 'build'), { recursive: true, force: true });
+	fs.mkdirSync(stage, { recursive: true });
+	fs.writeFileSync(path.join(stage, 'modrinth.index.json'), JSON.stringify(index, null, '\t'));
+	fs.cpSync(path.join(ROOT, 'overrides'), path.join(stage, 'overrides'), { recursive: true });
+	// client-overrides: launchers apply these only on players' games (Pocket List), never on servers.
+	if (fs.existsSync(path.join(ROOT, 'client-overrides'))) {
+		fs.cpSync(path.join(ROOT, 'client-overrides'), path.join(stage, 'client-overrides'), { recursive: true });
+	}
+
+	fs.mkdirSync(path.join(ROOT, 'dist'), { recursive: true });
+	const out = path.join(ROOT, 'dist', `${pack.name}-${pack.version}.mrpack`);
+	require('./zip.js')(stage, out);
+
+	// Human-readable summary
+	const rows = [...chosen.values()].map(({ project, version, reason }) =>
+		`${project.title} ${version.version_number} [${version.version_type}]${reason === 'listed' ? '' : ` (${reason})`}`);
+	rows.sort((a, b) => a.localeCompare(b));
+	fs.writeFileSync(path.join(ROOT, 'dist', 'mods.txt'), rows.join('\n') + '\n');
+	console.log(rows.join('\n'));
+	console.log(`\n${files.length} mods, written to ${out}`);
+})().catch(e => { console.error(e.message); process.exit(1); });

@@ -1,0 +1,300 @@
+{
+	"minecraft": "26.3",
+	"projects": {
+		"appleskin": {
+			"version": "PHjDtQay",
+			"number": "3.0.10+mc26.3",
+			"type": "release"
+		},
+		"balm": {
+			"version": "MYj31XNG",
+			"number": "26.3.0.3+fabric-26.3",
+			"type": "release"
+		},
+		"beautify-refabricated": {
+			"version": "1jFwqWDp",
+			"number": "3.0.0+26.3",
+			"type": "release"
+		},
+		"biomes-o-plenty": {
+			"version": "Hhn5UJ4L",
+			"number": "26.3.0.0.7",
+			"type": "release"
+		},
+		"bridging-mod": {
+			"version": "qRuZJe5U",
+			"number": "2.7.0+26.3.fabric",
+			"type": "release"
+		},
+		"carry-on": {
+			"version": "6kJQXHUF",
+			"number": "2.12.0",
+			"type": "release"
+		},
+		"chunky": {
+			"version": "4Eotm6ov",
+			"number": "1.5.3",
+			"type": "release"
+		},
+		"cloth-config": {
+			"version": "fg2uyxOW",
+			"number": "26.3.159+fabric",
+			"type": "release"
+		},
+		"clumps": {
+			"version": "J4I1wxJZ",
+			"number": "26.3.2",
+			"type": "release"
+		},
+		"controlling": {
+			"version": "V6AbRm67",
+			"number": "26.3.4",
+			"type": "release"
+		},
+		"durability-tooltip": {
+			"version": "5qPHfg1S",
+			"number": "1.2.0a-fabric-mc26.3",
+			"type": "release"
+		},
+		"dynamic-fps": {
+			"version": "Jwq069rR",
+			"number": "3.11.10",
+			"type": "release"
+		},
+		"easy-anvils": {
+			"version": "Unluz4cP",
+			"number": "26.3.1",
+			"type": "release"
+		},
+		"easy-magic": {
+			"version": "JvKuwM5d",
+			"number": "26.3.0",
+			"type": "release"
+		},
+		"ecologics": {
+			"version": "5UofDvyh",
+			"number": "2.7.1-NeoFab",
+			"type": "release"
+		},
+		"enchantment-descriptions": {
+			"version": "uZf2qbql",
+			"number": "26.3.0.2",
+			"type": "release"
+		},
+		"entityculling": {
+			"version": "X1g3VhTx",
+			"number": "1.11.3",
+			"type": "release"
+		},
+		"explorers-compass": {
+			"version": "69AbLioc",
+			"number": "26.3-2.5.2-fabric",
+			"type": "release"
+		},
+		"fabric-api": {
+			"version": "bq3SsNGk",
+			"number": "0.163.0+26.3",
+			"type": "release"
+		},
+		"fabric-language-kotlin": {
+			"version": "SKW1BTL3",
+			"number": "1.14.2+kotlin.2.4.21",
+			"type": "release"
+		},
+		"fallingtree": {
+			"version": "MGpq6CjC",
+			"number": "26.3-26.3.0.3",
+			"type": "release"
+		},
+		"ferrite-core": {
+			"version": "d5ddUdiB",
+			"number": "9.0.0-fabric",
+			"type": "release"
+		},
+		"forge-config-api-port": {
+			"version": "JpKvrr9J",
+			"number": "26.3.1",
+			"type": "release"
+		},
+		"glitchcore": {
+			"version": "kfFeDnrp",
+			"number": "26.3.0.0.5",
+			"type": "beta"
+		},
+		"immediatelyfast": {
+			"version": "3MP9UR23",
+			"number": "1.17.1+26.3-fabric",
+			"type": "release"
+		},
+		"iris": {
+			"version": "vTN4NRGW",
+			"number": "1.11.7+26.3-fabric",
+			"type": "release"
+		},
+		"jade": {
+			"version": "71CTWqdE",
+			"number": "26.3.5+fabric",
+			"type": "release"
+		},
+		"jamlib": {
+			"version": "EbhilCj8",
+			"number": "2.3.1+26.3.x",
+			"type": "release"
+		},
+		"jei": {
+			"version": "GsRHXaN6",
+			"number": "31.12.0.66",
+			"type": "beta"
+		},
+		"lambdynamiclights": {
+			"version": "rylKnJ4M",
+			"number": "4.13.0+26.3",
+			"type": "release"
+		},
+		"lithium": {
+			"version": "xS0Q8LSi",
+			"number": "mc26.3-0.26.2-fabric",
+			"type": "release"
+		},
+		"makeup-ultra-fast-shaders": {
+			"version": "pgb0JjoN",
+			"number": "9.5g",
+			"type": "release"
+		},
+		"mezzconfig": {
+			"version": "GKiA7PV4",
+			"number": "0.6.8",
+			"type": "beta"
+		},
+		"modernfix-mvus": {
+			"version": "pa9cAfYg",
+			"number": "5.27.20-build.2",
+			"type": "release"
+		},
+		"modmenu": {
+			"version": "kyy7dbrZ",
+			"number": "21.0.0",
+			"type": "release"
+		},
+		"mouse-tweaks": {
+			"version": "LeMuMhLv",
+			"number": "26.3-2.31-fabric",
+			"type": "release"
+		},
+		"natures-compass": {
+			"version": "pHan4UQ9",
+			"number": "26.3-2.5.1-fabric",
+			"type": "release"
+		},
+		"nemos-inventory-sorting": {
+			"version": "3zZfJn0X",
+			"number": "26.3-1.22.2",
+			"type": "release"
+		},
+		"otterlib": {
+			"version": "EZmdLF7S",
+			"number": "0.4.0.2+26.3",
+			"type": "beta"
+		},
+		"placeholder-api": {
+			"version": "lXytLqWj",
+			"number": "3.2.0+26.3",
+			"type": "release"
+		},
+		"polymer": {
+			"version": "G0fTdl8M",
+			"number": "0.18.4+26.3",
+			"type": "release"
+		},
+		"prickle": {
+			"version": "aPdekuq6",
+			"number": "26.3.0.2",
+			"type": "release"
+		},
+		"puzzles-lib": {
+			"version": "68hLXNWE",
+			"number": "26.3.15",
+			"type": "release"
+		},
+		"rightclickharvest": {
+			"version": "MTui9kST",
+			"number": "4.6.2+26.3.x",
+			"type": "release"
+		},
+		"searchables": {
+			"version": "wV79bLRS",
+			"number": "1.0.3",
+			"type": "release"
+		},
+		"shogi": {
+			"version": "9gkJoFhj",
+			"number": "26.3.0.3+fabric-26.3",
+			"type": "release"
+		},
+		"shulkerboxtooltip": {
+			"version": "Cj9VEeGt",
+			"number": "5.4.2+26.3-fabric",
+			"type": "release"
+		},
+		"sit": {
+			"version": "9zKJaj9v",
+			"number": "1.2.6.4+26.3",
+			"type": "release"
+		},
+		"sodium": {
+			"version": "bAZQdGpg",
+			"number": "mc26.3-0.9.2-fabric",
+			"type": "release"
+		},
+		"supermartijn642s-config-lib": {
+			"version": "eYcALOr1",
+			"number": "1.1.8a-fabric-mc26.3",
+			"type": "release"
+		},
+		"terrablender": {
+			"version": "xirJYe1V",
+			"number": "26.3.0.0.9",
+			"type": "beta"
+		},
+		"travelersbackpack": {
+			"version": "SmhjfeWr",
+			"number": "26.3-11.4.1",
+			"type": "release"
+		},
+		"universal-graves": {
+			"version": "r9hY06vQ",
+			"number": "3.13.0+26.3",
+			"type": "release"
+		},
+		"waystones": {
+			"version": "UKjvFJAV",
+			"number": "26.3.0.1+fabric-26.3",
+			"type": "release"
+		},
+		"xaeros-minimap": {
+			"version": "B2aG1aya",
+			"number": "fabric-26.3-26.6.0",
+			"type": "release"
+		},
+		"xaeros-world-map": {
+			"version": "nz9xjzWi",
+			"number": "fabric-26.3-1.47.0",
+			"type": "release"
+		},
+		"yacl": {
+			"version": "s9SjoFu1",
+			"number": "3.9.7+26.3-fabric",
+			"type": "release"
+		},
+		"yosbr": {
+			"version": "KMOzdYko",
+			"number": "0.1.2",
+			"type": "release"
+		},
+		"zoomify": {
+			"version": "RUBpNu00",
+			"number": "2.17.0+mc26.3",
+			"type": "release"
+		}
+	}
+}
