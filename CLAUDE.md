@@ -3,17 +3,18 @@
 A Modrinth modpack for Minecraft 26.3 on Fabric, built around Cozy Core (with Nightfall Clock,
 Not Now Shield, Pocket List and Spawn Gazebo): cozy, builder-friendly survival on an everyday PC.
 This repo is the pack list and the scripts that build the `.mrpack`; the mods themselves are
-downloaded from Modrinth.
+downloaded from Modrinth, and our own five from their GitHub releases.
 
 ## Layout
 
 - `pack.json`: the mods, shaders and resource packs, and which are optional or needed on a
-  server; `retired` names our own former jars that the installers move out of `mods/`.
-  `pack.lock.json`: the exact version of every one.
-- `overrides/`: files every install gets: the Cozy Core (Fabric), Spawn Gazebo and Not Now Shield
-  jars in `overrides/mods/`, and first-run settings under `overrides/config/yosbr/` (the MakeUp
-  shader switched on, FallingTree, Mod Menu). `client-overrides/`: players' games only (the
-  Nightfall Clock and Pocket List jars).
+  server; `retired` names our own former jars that the installers move out of `mods/`;
+  `ownMods` lists our own mods (Cozy Core, Spawn Gazebo, Not Now Shield, Pocket List, Nightfall
+  Clock) by GitHub repo, release tag and jar name, with `side` "client" for the two that stay off
+  servers. `pack.lock.json`: the exact version of every one, plus each own mod's download link,
+  hashes and size.
+- `overrides/`: files every install gets: first-run settings under `overrides/config/yosbr/` (the
+  MakeUp shader switched on, FallingTree, Mod Menu). No jars are kept in this repo.
 - `build-pack.js`, `install-test.js`, `install-server.js` (both built on `pack-files.js`),
   `scan-mixins.js`, `zip.js`, `rules-test.js`.
 
@@ -25,7 +26,7 @@ downloaded from Modrinth.
   (files already there with the right hash are kept, so only new ones download).
 - `node scan-mixins.js test-instance/mods`: other mods patching the classes our mods hook.
 - CI (`.github/workflows/build.yml`) builds the pack from the lock on every push and checks
-  every mod is pinned, our own jars are inside, and BOP has TerraBlender and no Biolith mods. It
+  every mod is pinned, our own mods are listed with working release links, and BOP has TerraBlender and no Biolith mods. It
   can't play the pack: test a change by installing it and opening a new world.
 - `node rules-test.js test-instance`: with a test game open (its MCPFabric bridge with
   commands on), checks Cozy Core's creeper, fire and Hearth Lantern rules
@@ -33,11 +34,11 @@ downloaded from Modrinth.
 
 ## Gotchas
 
-- **The jars in `overrides/mods/` and `client-overrides/mods/` are built from the mods' own
-  repos.** Build them from a clean, committed `main` of that repo and say which commit in the
-  commit message. First versions: cozy-core a706695 (0.2.0), spawn-gazebo a15452d (1.1.1),
-  not-now-shield a6ad07e (1.1.2, the `public` branch = public/main), nightfall-clock 0.2.1,
-  pocket-list 0.1.0.
+- **Our own mods come from GitHub releases.** To update one: release it from a clean, committed
+  `main` of its repo, change its `tag` and `asset` in `pack.json`'s `ownMods`, run
+  `node build-pack.js` (it downloads and hashes the jar) and commit the lock. Current: cozy-core
+  v0.3.0, spawn-gazebo v1.1.1, not-now-shield v1.2.0, pocket-list v0.1.0, nightfall-clock v0.2.1.
+  Deleting or renaming a release breaks the build, and CI checks every link.
 - Biomes O' Plenty needs TerraBlender, which its Modrinth dependency list doesn't name: it's
   listed in `pack.json` by hand. Don't add Wilder Wild or Promenade: their Biolith crashes with
   TerraBlender on 26.3.

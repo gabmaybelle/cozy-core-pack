@@ -1,7 +1,7 @@
 # Builds the .mrpack on every push and pull request, from the exact versions in pack.lock.json,
-# and checks the pack is whole: every mod in pack.json is pinned in the lock, our own jars
-# (Cozy Core, Spawn Gazebo and Not Now Shield in overrides/mods, Pocket List and Nightfall Clock
-# in client-overrides/mods) are there, and Biomes O' Plenty has the TerraBlender it needs and none
+# and checks the pack is whole: every mod in pack.json is pinned in the lock, our own mods
+# (Cozy Core, Spawn Gazebo, Not Now Shield, Pocket List and Nightfall Clock, from their GitHub
+# releases) are listed and their download links still work, and Biomes O' Plenty has the TerraBlender it needs and none
 # of the mods that crash with it. The built pack is attached to each run under "Pack".
 
 name: build
@@ -26,13 +26,15 @@ jobs:
         # Building from the lock leaves it as it was; a change means pack.json has a mod (or a
         # dependency) that isn't pinned yet. Run `node build-pack.js` locally and commit the lock.
         run: git diff --exit-code pack.lock.json
-      - name: our own jars are in the pack
+      - name: our own mods are in the pack and their releases still download
         run: |
-          for f in overrides/mods/cozy-core-*-fabric.jar overrides/mods/spawn-gazebo-*.jar \
-                   overrides/mods/not-now-shield-*.jar client-overrides/mods/pocket-list-*.jar \
-                   client-overrides/mods/nightfallclock-*.jar; do
-            ls build/stage/$f
-            unzip -l dist/*.mrpack | grep -E "(^|[[:space:]])${f//\*/.*}$"
+          unzip -p dist/*.mrpack modrinth.index.json > index.json
+          for f in 'cozy-core-.*-fabric\.jar' 'spawn-gazebo-.*\.jar' 'not-now-shield-.*\.jar' \
+                   'pocket-list-.*\.jar' 'nightfallclock-.*\.jar'; do
+            grep -qE "\"path\": \"mods/$f\"" index.json || { echo "missing from the pack: $f"; exit 1; }
+          done
+          for url in $(grep -oE 'https://github.com/gabmaybelle/[^"]+' index.json); do
+            curl -fsIL -o /dev/null "$url" || { echo "release download failed: $url"; exit 1; }
           done
       - name: Biomes O' Plenty can start
         # BOP needs TerraBlender, which its Modrinth dependencies don't list (pack.json names it).
