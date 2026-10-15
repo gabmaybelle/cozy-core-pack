@@ -2,13 +2,17 @@
 // Spawn Gazebo...) patch the same game code: creeper explosions, fire and the Hearth Lantern,
 // each checked with the rule on its default and again switched the other way (the proof run).
 //   node rules-test.js "<test game folder>" [player name]
-// Needs a running test game opened by the local toolkit's new-test-world.js with
-// --mcp --commands, and that toolkit's mcf.js (MCF, default ~/mods-dev/tools/mcf.js).
+// Needs a running test game whose MCPFabric bridge has commands on, and the bridge's
+// command-line client, mcf.js: set the MCF environment variable to its path.
 // Builds far from spawn (x 400), away from Spawn Gazebo's protected area.
 const path = require('path'), { execFileSync } = require('child_process');
 
 const [folder, player = 'GrabbyTM'] = process.argv.slice(2);
-const MCF = process.env.MCF || path.join(process.env.USERPROFILE || process.env.HOME, 'mods-dev', 'tools', 'mcf.js');
+const MCF = process.env.MCF;
+if (!MCF) {
+	console.error('set MCF to the path of the MCPFabric bridge command-line client (mcf.js)');
+	process.exit(1);
+}
 const run = command => {
 	const out = execFileSync(process.execPath, [MCF, folder, 'command.run', JSON.stringify({ command })], { encoding: 'utf8' });
 	return ((out.replace(/\n/g, '').match(/"output": \[\s*"([^"]*)/) || [])[1] || '');
