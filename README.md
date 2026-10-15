@@ -6,7 +6,7 @@ A cozy, builder-friendly survival modpack for Minecraft 26.3 on Fabric. Your bui
 
 ## Getting started
 
-1. Download the `.mrpack` and import it into the Modrinth app, Prism Launcher, ATLauncher or CurseForge. The launcher sets up Minecraft 26.3 and Fabric for you. (There is no download on the Releases page yet; the first release is still to come.)
+1. Download the `.mrpack` from the [Releases page](https://github.com/gabmaybelle/cozy-core-pack/releases) and import it into the Modrinth app, Prism Launcher, ATLauncher or CurseForge. The launcher sets up Minecraft 26.3 and Fabric for you. (0.1.0 is a pre-release: the pack hasn't had a long play test yet.)
 2. Give the game 4 GB of memory if your PC has it. Launchers often start at 2 GB, which stutters once you explore.
 3. Start a new world. The pack switches on a light shader (MakeUp UltraFast) for you.
 
