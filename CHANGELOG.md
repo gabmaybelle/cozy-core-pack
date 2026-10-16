@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.1
+
+Our own mods move to their newest versions. Nothing else in the pack changes.
+
+- **Pocket List 0.2.0:** a new release with the same checklist, now also made for NeoForge.
+- **Nightfall Clock 0.3.1:** the clock reads the sun the way the sky does.
+- **Not Now, Shield 1.3.0** and **Spawn Gazebo 1.2.0:** now also made for NeoForge; on Fabric they work as before. Worlds you already have keep their gazebo.
+- Updating an install with the pack's own scripts moves the older copies of these mods out of `mods/` (into `old-pack-files/`), so two copies never load together.
+
 ## 0.1.0
 
 The first release of the Cozy Core Pack: a cozy, builder-friendly survival pack for Minecraft 26.3 on Fabric (Fabric Loader 0.19.5 or newer), made to run well on an ordinary PC.
