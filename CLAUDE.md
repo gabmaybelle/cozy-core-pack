@@ -37,7 +37,7 @@ downloaded from Modrinth, and our own five from their GitHub releases.
 - **Our own mods come from GitHub releases.** To update one: release it from a clean, committed
   `main` of its repo, change its `tag` and `asset` in `pack.json`'s `ownMods`, run
   `node build-pack.js` (it downloads and hashes the jar) and commit the lock. Current: cozy-core
-  v0.3.0, spawn-gazebo v1.2.0, not-now-shield v1.3.0, pocket-list v0.2.0, nightfall-clock v0.3.1
+  v0.3.0, spawn-gazebo v1.3.0, not-now-shield v1.3.0, pocket-list v0.3.0, nightfall-clock v0.3.1
   (the Fabric jars, named `<mod>-fabric-<version>.jar` since those releases; the old names are on the
   `retired` list so the installers move an older copy out of `mods/`).
   Deleting or renaming a release breaks the build, and CI checks every link.

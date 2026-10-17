@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.2
+
+Our own mods move to their newest versions. Nothing else in the pack changes.
+
+- **Spawn Gazebo 1.3.0:** an operator can give a world you already have its gazebo with `/spawngazebo build` (then `/spawngazebo build confirm`).
+- **Pocket List 0.3.0:** Paste List makes a list from text you've copied, Copy List copies yours to share, and From Litematica turns a schematic's material list into a list.
+- Updating an install with the pack's own scripts moves the older copies of these mods out of `mods/` (into `old-pack-files/`), so two copies never load together.
+
 ## 0.1.1
 
 Our own mods move to their newest versions. Nothing else in the pack changes.
