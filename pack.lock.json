@@ -307,12 +307,12 @@
 			"size": 879587
 		},
 		"spawn-gazebo": {
-			"tag": "v1.2.0",
-			"asset": "spawn-gazebo-fabric-1.2.0.jar",
-			"url": "https://github.com/gabmaybelle/spawn-gazebo/releases/download/v1.2.0/spawn-gazebo-fabric-1.2.0.jar",
-			"sha1": "2b5353fb75d20544cec0cae815809a4796444a93",
-			"sha512": "00dd35cf1c69b7e22b4b102267523ff6363f8bff2165e27c58c0d505d6d7c919498541d37dfc3623878a4b061f33acc2bb3ec54121d54ce65b4b1944fa2fceaf",
-			"size": 353972
+			"tag": "v1.3.0",
+			"asset": "spawn-gazebo-fabric-1.3.0.jar",
+			"url": "https://github.com/gabmaybelle/spawn-gazebo/releases/download/v1.3.0/spawn-gazebo-fabric-1.3.0.jar",
+			"sha1": "8cdb6b8659ed866efac2d5341af1b93158e22f5e",
+			"sha512": "c01bbf7c42506cc28d46d2ed1414c58a042db337b46294f26b117318b29f308bcea414ed25f82309f8b3ca545ee6b73469efd115c6321825d99801a6c77c003a",
+			"size": 359270
 		},
 		"not-now-shield": {
 			"tag": "v1.3.0",
@@ -323,12 +323,12 @@
 			"size": 11129
 		},
 		"pocket-list": {
-			"tag": "v0.2.0",
-			"asset": "pocket-list-fabric-0.2.0.jar",
-			"url": "https://github.com/gabmaybelle/pocket-list/releases/download/v0.2.0/pocket-list-fabric-0.2.0.jar",
-			"sha1": "182ae07f438c79bae1d77bb476c3b3f318581e40",
-			"sha512": "d298c7178655c320aa635616e86790607b36f2932121ce6b8f82638f30843cf6335c378a91a1bf0282bc2a8b254eb8b984884e182954327dc19cff33398dce7c",
-			"size": 93095
+			"tag": "v0.3.0",
+			"asset": "pocket-list-fabric-0.3.0.jar",
+			"url": "https://github.com/gabmaybelle/pocket-list/releases/download/v0.3.0/pocket-list-fabric-0.3.0.jar",
+			"sha1": "03fdaad4fd21519005142cac26d96a8b9a000eeb",
+			"sha512": "b3ffb1dd1e2bd94d45bc4bf3e2970512f7682d14ef872fddc4f37d3ea99491df2c951aab19c0fd45588e2e36c86d7deccacfa03fc9a9ed66d81d30d9579365f4",
+			"size": 104195
 		},
 		"nightfall-clock": {
 			"tag": "v0.3.1",
